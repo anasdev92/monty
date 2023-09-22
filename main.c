@@ -1,17 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "monty.h"
+
+#define MAX_LINE_LENGTH 1024
 bus_t bus = {NULL, NULL, NULL, 0};
 /**
-* main - monty code interpreter
-* @argc: number of arguments
-* @argv: monty file location
-* Return: 0 on success
-*/
+ * main - monty code interpreter
+ * @argc: number of arguments
+ * @argv: monty file location
+ * Return: 0 on success
+ */
 int main(int argc, char *argv[])
 {
-	char *content;
+	char content[MAX_LINE_LENGTH];
 	FILE *file;
-	size_t size = 0;
-	ssize_t read_line = 1;
 	stack_t *stack = NULL;
 	unsigned int counter = 0;
 
@@ -21,25 +23,17 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	file = fopen(argv[1], "r");
-	bus.file = file;
 	if (!file)
 	{
 		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}
-	while (read_line > 0)
+	while (fgets(content, MAX_LINE_LENGTH, file) != NULL)
 	{
-		content = NULL;
-		read_line = getline(&content, &size, file);
-		bus.content = content;
 		counter++;
-		if (read_line > 0)
-		{
-			execute(content, &stack, counter, file);
-		}
-		free(content);
+		execute(content, &stack, counter, file);
 	}
 	free_stack(stack);
 	fclose(file);
-return (0);
+	return (0);
 }
